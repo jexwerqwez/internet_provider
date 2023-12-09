@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Поиск по цене
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <form method="post">
+        <div class="mb-3">
+            <label for="minPrice" class="form-label">Минимальная цена</label>
+            <input type="number" class="form-control" id="minPrice" name="min_price" value="{{ min_price }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="maxPrice" class="form-label">Максимальная цена</label>
+            <input type="number" class="form-control" id="maxPrice" name="max_price" value="{{ max_price }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Поиск</button>
+    </form>
+    {% if min_price and max_price and products %}
+    <div class="alert alert-primary mt-3" role="alert">
+      Поиск по цене от {{ min_price }} до {{ max_price }}
+    </div>
+    {% elif not products and min_price and max_price %}
+    <div class="alert alert-warning mt-3" role="alert">
+      По вашему запросу ничего не найдено.
+    </div>
+    {% endif %}
+    {% if query %}
+        {% include 'table.html' %}
+    {% endif %}
+{% endblock %}

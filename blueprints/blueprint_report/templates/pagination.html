@@ -1,0 +1,38 @@
+<div class="container mt-5">
+    <ul class="pagination flex-wrap text-muted">
+        {% if current_page > 1 %}
+        <li class="page-item">
+            <form method="POST" action="{{ request.path }}">
+                <input type="hidden" style="color: black;" name="page" value="{{ current_page-1 }}">
+                <button type="submit" style="color: black;" class="page-link">Назад</button>
+            </form>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link">Назад</a>
+        </li>
+        {% endif %}
+
+        {% for page_num in range(1, total_pages + 1) %}
+        <li class="page-item {% if current_page == page_num %}active{% endif %}">
+            <form method="POST" action="{{ request.path }}">
+                <input type="hidden" style="color: black;" name="page" value="{{ page_num }}">
+                <button type="submit" style="color: black;" class="page-link">{{ page_num }}</button>
+            </form>
+        </li>
+        {% endfor %}
+
+        {% if current_page < total_pages %}
+        <li class="page-item">
+            <form method="POST" action="{{ request.path }}">
+                <input type="hidden" style="color: black;" name="page" value="{{ current_page+1 }}">
+                <button type="submit" style="color: black;" class="page-link">Вперёд</button>
+            </form>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link">Вперёд</a>
+        </li>
+        {% endif %}
+    </ul>
+</div>

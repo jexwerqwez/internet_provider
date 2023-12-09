@@ -1,0 +1,30 @@
+    <div class="bd-example-snippet bd-code-snippet">
+        <div class="bd-example m-0 border-0">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">№ договора</th>
+                        <th scope="col">Статус</th>
+                        <th scope="col">Паспорт</th>
+                        <th scope="col">Дата рождения</th>
+                        <th scope="col">Имя клиента</th>
+                        <th scope="col">Текущий баланс</th>
+                        <th scope="col">Дата последнего изменения баланса</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for client in clients %}
+                    <tr>
+                        <th scope="row">{{ client.contract_number }}</th>
+                        <td>{{ client.service_status }}</td>
+                        <td>{{ client.passport }}</td>
+                        <td>{{ client.birthday }}</td>
+                        <td>{{ client.client_name }}</td>
+                        <td>{{ client.current_balance }}</td>
+                        <td>{{ client.cur_balance_date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>

@@ -1,0 +1,15 @@
+.full-height {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+body {
+    font-size: 1.5rem;
+}
+
+.list-group-item {
+    max-width: 350px;
+    margin: 0 auto;
+}

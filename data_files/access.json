@@ -1,0 +1,22 @@
+{
+  "admin": [
+    "blueprint_services",
+    "blueprint_management",
+    "blueprint_report",
+    "blueprint_report.create_report"
+  ],
+  "moderator": [
+    "blueprint_clients",
+    "blueprint_report",
+    "blueprint_report.view_report",
+    "blueprint_request"
+  ],
+  "client": [
+    "blueprint_services",
+    "blueprint_account",
+    "blueprint_request"
+  ],
+  "typical": [
+    "blueprint_services"
+  ]
+}

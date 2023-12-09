@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Создание отчёта
+{% endblock %}
+{% block body %}
+<body>
+    <div class="container">
+        <h2 class="my-4">Создание отчета</h2>
+
+        <form action="{{ url_for('blueprint_report.create_report', report_id=report_id) }}" method="post">
+        {% if report_id == 1 %}
+        <div class="mb-3">
+            <label for="prod_name" class="form-label">Название продукта</label>
+            <select class="form-select" id="prod_name" name="prod_name">
+                {% for product in products %}
+                <option value="{{ product['name'] }}">{{ product['name'] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% elif report_id == 2 %}
+        <div class="mb-3">
+            <label for="prod_category" class="form-label">Категория продукта</label>
+            <select class="form-select" id="prod_category" name="prod_category">
+                {% for category in categories %}
+                <option value="{{ category['name'] }}">{{ category['name'] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
+            <div class="mb-3">
+                <label for="date_from" class="form-label">От</label>
+                <input type="date" class="form-control" id="date_from" name="date_from" required>
+            </div>
+            <div class="mb-3">
+                <label for="date_to" class="form-label">До</label>
+                <input type="date" class="form-control" id="date_to" name="date_to" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Создать отчет</button>
+        </form>
+    </div>
+</body>
+</html>
+{% endblock %}

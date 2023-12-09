@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Поиск по стоимости
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <form method="post">
+        <div class="mb-3">
+            <label for="mincost" class="form-label">Минимальная стоимость услуги</label>
+            <input type="number" class="form-control" id="mincost" name="min_cost" value="{{ min_cost }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="maxcost" class="form-label">Максимальная стоимость услуги</label>
+            <input type="number" class="form-control" id="maxcost" name="max_cost" value="{{ max_cost }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Поиск</button>
+    </form>
+    {% if min_cost and max_cost and services %}
+    <div class="alert alert-primary mt-3" role="alert">
+      Поиск по стоимости услуг от {{ min_cost }} до {{ max_cost }}
+    </div>
+    {% elif not services and min_cost and max_cost %}
+    <div class="alert alert-warning mt-3" role="alert">
+      По вашему запросу ничего не найдено.
+    </div>
+    {% endif %}
+    {% if services %}
+        {% include 'services/table.html' %}
+    {% endif %}
+{% endblock %}

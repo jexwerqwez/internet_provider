@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Отчёт
+{% endblock %}
+{% block body %}
+<body>
+    <div class="container full-height">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h1 class="text-center mb-4">Отчёты</h1>
+
+                {% set user_group = session.get('user_group') %}
+
+                {% for report_id in [1, 2, 3] %}
+                <div class="row mb-2 align-items-center">
+                    {% if report_id == 1 %}
+                    <div class="col-md-8 text-start">
+                        <span>Выручка за период:</span>
+                    </div>
+                    {% elif report_id == 2 %}
+                    <div class="col-md-8 text-start">
+                        <span>Оборот по каждой категории за период:</span>
+                    </div>
+                    {% elif report_id == 3 %}
+                    <div class="col-md-8 text-start">
+                        <span>Топ популярных товаров:</span>
+                    </div>
+                    {% endif %}
+                    <div class="col-md-4 text-end">
+                        {% if user_group == 'admin' %}
+                        <a href="{{ url_for('blueprint_report.create_report', report_id=report_id) }}" class="btn btn-primary btn-sm">Создание</a>
+                        {% elif user_group == 'manager' %}
+                        <a href="{{ url_for('blueprint_report.view_report', report_id=report_id) }}" class="btn btn-secondary btn-sm">Просмотр</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+{% endblock %}

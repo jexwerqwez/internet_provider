@@ -1,0 +1,20 @@
+    <div class="bd-example-snippet bd-code-snippet">
+        <div class="bd-example m-0 border-0">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Услуга</th>
+                        <th scope="col">Цена</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for service in services %}
+                    <tr>
+                        <td>{{ service.name }} </td>
+                        <td>{{ service.cost }} ₽</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>

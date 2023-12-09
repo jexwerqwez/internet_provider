@@ -1,0 +1,1 @@
+SELECT * FROM contract WHERE client_name LIKE :client_name LIMIT :limit OFFSET :offset;

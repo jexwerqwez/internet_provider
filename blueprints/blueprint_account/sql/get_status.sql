@@ -1,0 +1,1 @@
+SELECT service_status FROM contract WHERE contract.contract_number = :contract_number

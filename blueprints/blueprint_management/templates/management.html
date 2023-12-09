@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Управление услугами
+{% endblock %}
+
+{% block body %}
+{% include 'management_table.html' %}
+<form method="POST" action="{{ url_for('blueprint_management.add_service') }}">
+    <input type="text" name="name" required placeholder="Название услуги">
+    <input type="number" name="cost" required placeholder="Цена услуги">
+    <input type="text" name="description" required placeholder="Описание услуги">
+    <button type="submit">Добавить услугу</button>
+</form>
+{% include 'pagination.html' %}
+
+{% endblock %}

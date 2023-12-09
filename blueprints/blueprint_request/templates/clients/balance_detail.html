@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Поиск по цене
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <form method="post">
+        <div class="mb-3">
+            <label for="minBalance" class="form-label">Минимальный баланс</label>
+            <input type="number" class="form-control" id="minBalance" name="min_balance" value="{{ min_balance }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="maxBalance" class="form-label">Максимальный баланс</label>
+            <input type="number" class="form-control" id="maxBalance" name="max_balance" value="{{ max_balance }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Поиск</button>
+    </form>
+    {% if min_balance and max_balance and clients %}
+    <div class="alert alert-primary mt-3" role="alert">
+      Поиск клиентов по балансу от {{ min_balance }} до {{ max_balance }}
+    </div>
+    {% elif not clients and min_balance and max_balance %}
+    <div class="alert alert-warning mt-3" role="alert">
+      По вашему запросу ничего не найдено.
+    </div>
+    {% endif %}
+    {% if clients %}
+        {% include 'clients/table.html' %}
+    {% endif %}
+{% endblock %}

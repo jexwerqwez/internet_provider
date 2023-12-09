@@ -1,0 +1,1 @@
+SELECT * FROM product WHERE prod_category = :category_name LIMIT :limit OFFSET :offset;

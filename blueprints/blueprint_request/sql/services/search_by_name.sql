@@ -1,0 +1,1 @@
+SELECT * FROM all_services WHERE name LIKE :name LIMIT :limit OFFSET :offset;

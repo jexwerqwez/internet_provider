@@ -1,0 +1,26 @@
+    <div class="bd-example-snippet bd-code-snippet">
+        <div class="bd-example m-0 border-0">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Название</th>
+                        <th scope="col">Количество</th>
+                        <th scope="col">Цена</th>
+                        <th scope="col">Категория</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <th scope="row">{{ product.prod_id }}</th>
+                        <td>{{ product.prod_name }}</td>
+                        <td>{{ product.prod_measure }}</td>
+                        <td>{{ product.prod_price }}</td>
+                        <td>{{ product.prod_category }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>

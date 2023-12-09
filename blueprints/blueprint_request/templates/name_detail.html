@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Поиск по названию
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <form method="post">
+        <div class="mb-3">
+            <label for="productName" class="form-label">Название продукта</label>
+            <input type="text" class="form-control" id="productName" name="product_name" value="{{ query }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Поиск</button>
+    </form>
+
+    {% if query and products%}
+    <div class="alert alert-primary mt-3" role="alert">
+      Поиск по запросу "{{ query }}"
+    </div>
+    {% elif not products and query %}
+    <div class="alert alert-warning mt-3" role="alert">
+      По запросу "{{ query }}" ничего не найдено.
+    </div>
+    {% endif %}
+    {% if query %}
+        {% include 'table.html' %}
+    {% endif %}
+{% endblock %}

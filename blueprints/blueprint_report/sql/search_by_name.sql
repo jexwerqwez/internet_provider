@@ -1,0 +1,1 @@
+SELECT * FROM product WHERE prod_name LIKE :product_name LIMIT :limit OFFSET :offset;
