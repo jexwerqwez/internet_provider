@@ -9,8 +9,12 @@
 <div class="container center-content">
     <h2>Меню работы с запросами</h2>
     <div class="list-group mt-4">
-        <a href="{{ url_for('blueprint_request.client_name_detail') }}" class="list-group-item list-group-item-action">Поиск по имени</a>
-        <a href="{{ url_for('blueprint_request.client_balance_detail') }}" class="list-group-item list-group-item-action">Поиск по балансу</a>
+        <a href="{{ url_for('blueprint_request.universal_detail', type='name') }}" class="list-group-item list-group-item-action">Показать все сведения о клиентах по имени</a>
+        <a href="{{ url_for('blueprint_request.universal_detail', type='balance') }}" class="list-group-item list-group-item-action">Показать все сведения о клиентах по балансу</a>
+        <a href="{{ url_for('blueprint_request.universal_detail', type='birthday') }}" class="list-group-item list-group-item-action">Показать все сведения о клиентах по дате рождения</a>
+
+        <a href="{{ url_for('blueprint_request.universal_detail', type='active') }}" class="list-group-item list-group-item-action">Показать все сведенья о клиентах, наиболее активно расходовавших баланс</a>
+        <a href="{{ url_for('blueprint_request.universal_detail', type='constant' ) }}" class="list-group-item list-group-item-action">Показать все сведенья о клиентах, ни разу не изменявших баланс</a>
     </div>
 </div>
 {% endblock %}

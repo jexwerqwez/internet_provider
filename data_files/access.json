@@ -1,22 +1,28 @@
 {
   "admin": [
     "blueprint_services",
-    "blueprint_management",
-    "blueprint_report",
-    "blueprint_report.create_report"
+    "blueprint_management"
   ],
   "moderator": [
     "blueprint_clients",
     "blueprint_report",
-    "blueprint_report.view_report",
+    "blueprint_report.create_report",
     "blueprint_request"
   ],
-  "client": [
-    "blueprint_services",
+  "booker": [
+    "blueprint_clients",
+    "blueprint_report",
+    "blueprint_report.create_report",
+    "blueprint_request"
+  ],
+  "director": [
+    "blueprint_report",
+    "blueprint_report.view_report"
+  ],
+  "external": [
     "blueprint_account",
+    "blueprint_services",
+    "blueprint_constructor",
     "blueprint_request"
-  ],
-  "typical": [
-    "blueprint_services"
   ]
 }

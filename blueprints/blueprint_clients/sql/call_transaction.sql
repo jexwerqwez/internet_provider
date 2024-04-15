@@ -1,0 +1,1 @@
+CALL WRITEOFF_TWO(:date)

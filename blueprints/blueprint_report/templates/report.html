@@ -12,28 +12,35 @@
 
                 {% set user_group = session.get('user_group') %}
 
-                {% for report_id in [1, 2, 3] %}
+                {% for report in [{'id': 1, 'type': 1}, {'id': 2, 'type': 2}, {'id': 3, 'type': 3}] %}
                 <div class="row mb-2 align-items-center">
-                    {% if report_id == 1 %}
+                    {% if report.id == 1 and user_group == 'moderator' %}
                     <div class="col-md-8 text-start">
-                        <span>Выручка за период:</span>
+                        <span>Подключенные и отключенные услуги за месяц:</span>
                     </div>
-                    {% elif report_id == 2 %}
-                    <div class="col-md-8 text-start">
-                        <span>Оборот по каждой категории за период:</span>
+                    <div class="col-md-4 text-end">
+                        <a href="{{ url_for('blueprint_report.create_report', report_id=report.id, report_type=report.type) }}" class="btn btn-primary btn-sm">Создание</a>
                     </div>
-                    {% elif report_id == 3 %}
+                    {% elif report.id == 2 and user_group == 'booker' %}
                     <div class="col-md-8 text-start">
-                        <span>Топ популярных товаров:</span>
+                        <span>Отчёт об изменениях баланса клиентов:</span>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <a href="{{ url_for('blueprint_report.create_report', report_id=report.id, report_type=report.type) }}" class="btn btn-primary btn-sm">Создание</a>
+                    </div>
+                    {% elif report.id == 3 and user_group == 'booker' %}
+                    <div class="col-md-8 text-start">
+                        <span>Топ услуг по прибыльности:</span>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <a href="{{ url_for('blueprint_report.create_report', report_id=report.id, report_type=report.type) }}" class="btn btn-primary btn-sm">Создание</a>
                     </div>
                     {% endif %}
+                    {% if user_group == 'director' %}
                     <div class="col-md-4 text-end">
-                        {% if user_group == 'admin' %}
-                        <a href="{{ url_for('blueprint_report.create_report', report_id=report_id) }}" class="btn btn-primary btn-sm">Создание</a>
-                        {% elif user_group == 'manager' %}
-                        <a href="{{ url_for('blueprint_report.view_report', report_id=report_id) }}" class="btn btn-secondary btn-sm">Просмотр</a>
-                        {% endif %}
+                        <a href="{{ url_for('blueprint_report.view_report', report_id=report.id, report_type=report.type) }}" class="btn btn-secondary btn-sm">Просмотр</a>
                     </div>
+                    {% endif %}
                 </div>
                 {% endfor %}
 

@@ -3,42 +3,58 @@
 {% block title %}
 Создание отчёта
 {% endblock %}
+
 {% block body %}
 <body>
     <div class="container">
         <h2 class="my-4">Создание отчета</h2>
 
-        <form action="{{ url_for('blueprint_report.create_report', report_id=report_id) }}" method="post">
-        {% if report_id == 1 %}
-        <div class="mb-3">
-            <label for="prod_name" class="form-label">Название продукта</label>
-            <select class="form-select" id="prod_name" name="prod_name">
-                {% for product in products %}
-                <option value="{{ product['name'] }}">{{ product['name'] }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        {% elif report_id == 2 %}
-        <div class="mb-3">
-            <label for="prod_category" class="form-label">Категория продукта</label>
-            <select class="form-select" id="prod_category" name="prod_category">
-                {% for category in categories %}
-                <option value="{{ category['name'] }}">{{ category['name'] }}</option>
-                {% endfor %}
-            </select>
-        </div>
+        {% if message %}
+            <div class="alert alert-warning" role="alert">
+                {{ message }}
+            </div>
         {% endif %}
+
+        <form action="{{ url_for('blueprint_report.create_report', report_id=report_id, report_type=report_type) }}" method="post">
+            <input type="hidden" name="report_type" value="{{ report_type }}">
+
+            {% if report_type == 2 %}
+                <div class="mb-3">
+                    <label for="start_contract_number" class="form-label">Начальный номер контракта</label>
+                    <input type="number" class="form-control" id="start_contract_number" name="start_contract_number">
+                </div>
+
+                <div class="mb-3">
+                    <label for="end_contract_number" class="form-label">Конечный номер контракта</label>
+                    <input type="number" class="form-control" id="end_contract_number" name="end_contract_number">
+                </div>
+            {% endif %}
+
             <div class="mb-3">
-                <label for="date_from" class="form-label">От</label>
-                <input type="date" class="form-control" id="date_from" name="date_from" required>
+                <label for="report_month" class="form-label">Месяц</label>
+                <select class="form-select" id="report_month" name="report_month">
+                    <option value="1">Январь</option>
+                    <option value="2">Февраль</option>
+                    <option value="3">Март</option>
+                    <option value="4">Апрель</option>
+                    <option value="5">Май</option>
+                    <option value="6">Июнь</option>
+                    <option value="7">Июль</option>
+                    <option value="8">Август</option>
+                    <option value="9">Сентябрь</option>
+                    <option value="10">Октябрь</option>
+                    <option value="11">Ноябрь</option>
+                    <option value="12">Декабрь</option>
+                </select>
             </div>
+
             <div class="mb-3">
-                <label for="date_to" class="form-label">До</label>
-                <input type="date" class="form-control" id="date_to" name="date_to" required>
+                <label for="report_year" class="form-label">Год</label>
+                <input type="number" class="form-control" id="report_year" name="report_year" min="1969" max="{{ current_year }}" required>
             </div>
+
             <button type="submit" class="btn btn-primary">Создать отчет</button>
         </form>
     </div>
 </body>
-</html>
 {% endblock %}

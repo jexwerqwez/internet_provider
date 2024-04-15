@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Детали отчёта
+{% endblock %}
+
+{% block body %}
+<body>
+    <div class="container">
+        {% if report_type == 1 %}
+        <h2 class="my-4">Детали отчета "Количество подключений и отключений услуг за месяц"</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Название Услуги</th>
+                    <th>Количество Подключений</th>
+                    <th>Количество Отключений</th>
+                    <th>ID Отчета</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for detail in report_details %}
+                <tr>
+                    <td>{{ detail['rd_id'] }}</td>
+                    <td>{{ detail['service_name'] }}</td>
+                    <td>{{ detail['on_count'] }}</td>
+                    <td>{{ detail['off_count'] }}</td>
+                    <td>{{ detail['fk_report'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% elif report_type == 2 %}
+        <h2 class="my-4">Детали отчета "Изменение баланса клиента за месяц"</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Номер Клиента</th>
+                    <th>Ф.И.О. Клиента</th>
+                    <th>Общая Сумма Пополнений</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for detail in report_details %}
+                <tr>
+                    <td>{{ detail['rd_id'] }}</td>
+                    <td>{{ detail['contract_number'] }}</td>
+                    <td>{{ detail['client_name'] }}</td>
+                    <td>{{ detail['amount_spent'] }} ₽</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        <a href="{{ url_for('blueprint_report.view_report', report_id=report_id, report_type=report_type) }}" class="btn btn-primary">Назад к списку отчетов</a>
+    </div>
+</body>
+{% endblock %}

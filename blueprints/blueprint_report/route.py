@@ -7,63 +7,55 @@ from access import group_required, group_validation
 blueprint_report = Blueprint('blueprint_report', __name__, template_folder='templates', static_folder='static')
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
+
 def execute_query_from_file(filename, **params):
     with open(os.path.join(current_dir, 'sql', filename), 'r') as file:
         query = file.read().strip()
+
     with engine.connect() as connection:
-        result = connection.execute(text(query).bindparams(**params))
-        columns = result.keys()
-        return [dict(zip(columns, row)) for row in result.fetchall()]
-
-def get_categories():
-    with open(os.path.join(current_dir, 'sql/get_category_img.sql'), 'r') as file:
-        query = file.read().strip()
-    with engine.connect() as connection:
-        result = connection.execute(text(query))
-
-        return [{'name': row[0], 'image': row[1]} for row in result]
-
-
-def get_prod_name():
-    with open(os.path.join(current_dir, 'sql/get_prod_name.sql'), 'r') as file:
-        query = file.read().strip()
-    with engine.connect() as connection:
-        result = connection.execute(text(query))
-        return [{'id': row[0], 'name': row[1]} for row in result]
+        try:
+            result = connection.execute(text(query).bindparams(**params))
+            connection.commit()  # Явный коммит изменений
+            if result.returns_rows:
+                columns = result.keys()
+                return [dict(zip(columns, row)) for row in result.fetchall()]
+            else:
+                return None
+        except Exception as e:
+            connection.rollback()  # Откат изменений в случае ошибки
+            raise e  # Повторное возбуждение исключения для обработки в вызывающем коде
 
 
-def count_products():
-    with open(os.path.join(current_dir, 'sql/count_products.sql'), 'r') as file:
-        query = file.read().strip()
-    with engine.connect() as connection:
-        result = connection.execute(text(query))
-        return result.fetchone()[0]
 
-def get_all_from_db(page, per_page=10):
+def report_exists(report_month, report_year):
+    reports = execute_query_from_file('check_report_existence.sql', report_month=report_month, report_year=report_year)
+    return len(reports) > 0
+
+
+def get_all_reports():
+    return execute_query_from_file('get_all_reports.sql')
+
+
+def get_report_details_service(report_id):
+    return execute_query_from_file('get_report_details_service.sql', report_id=report_id)
+
+
+def get_report_details_balance(report_id):
+    return execute_query_from_file('get_report_details_balance.sql', report_id=report_id)
+
+
+def get_service_report(page, per_page=10):
     offset = (page - 1) * per_page
-    return execute_query_from_file('get_all_services.sql', limit=per_page, offset=offset)
+    return execute_query_from_file('view_service_report.sql', limit=per_page, offset=offset)
 
 
-def get_report_data(report_id):
-    table_map = {1: 'report_revenue', 2: 'report_turnover', 3: 'report_producttop'}
-    table_name = table_map.get(report_id)
-    with engine.connect() as connection:
-        result = connection.execute(text(f"SELECT * FROM {table_name}"))
-        columns = result.keys()
-        report_data = [dict(zip(columns, row)) for row in result.fetchall()]
-        return report_data
+def show_all_service_reports():
+    return execute_query_from_file('show_all_service_reports.sql')
 
 
-def process_report_creation(report_id, date_from, date_to, report_data):
-    table_map = {1: 'report_revenue', 2: 'report_turnover', 3: 'report_producttop'}
-    table_name = table_map.get(report_id)
+def show_all_balance_reports():
+    return execute_query_from_file('show_all_balance_reports.sql')
 
-    with engine.connect() as connection:
-        query = text(
-            f"INSERT INTO {table_name} (date_from, date_to, report_data) VALUES (:date_from, :date_to, :report_data)"
-        )
-        connection.execute(query, {"date_from": date_from, "date_to": date_to, "report_data": report_data})
-        connection.commit()
 
 
 @blueprint_report.route('/', methods=['GET', 'POST'])
@@ -72,30 +64,55 @@ def make_report():
     return render_template("report.html")
 
 
-@blueprint_report.route('/create_report/<int:report_id>', methods=['GET', 'POST'])
+@blueprint_report.route('/create_report/<int:report_id>/<int:report_type>', methods=['GET', 'POST'])
 @group_required
-def create_report(report_id):
+def create_report(report_id, report_type):
     if not group_validation(current_app.config['access_config'], 'blueprint_report.create_report'):
         return render_template('exceptions/admin_only.html')
+
     if request.method == 'POST':
-        date_from = request.form['date_from']
-        date_to = request.form['date_to']
-        report_data = request.form.get('prod_name') if report_id == 1 else request.form.get('prod_category', 'aboba')
-        process_report_creation(report_id, date_from, date_to, report_data)
-        return redirect(url_for("blueprint_report.make_report"))
+        report_month = request.form.get('report_month')
+        report_year = request.form.get('report_year')
 
-    categories = get_categories()
-    products = get_prod_name()
-    return render_template("create_report.html", categories=categories, products=products, report_id=report_id)
+        if report_exists(report_month, report_year):
+            message = "Отчет за данный период уже существует."
+            return render_template("create_report.html", report_id=report_id, report_type=report_type, message=message)
+
+        if report_type == 1:
+            execute_query_from_file('call_procedure_service_report.sql', report_month=report_month, report_year=report_year)
+        elif report_type == 2:
+            start_contract = request.form.get('start_contract_number')
+            end_contract = request.form.get('end_contract_number')
+            execute_query_from_file('call_procedure_balance_report.sql',
+                                    start_num=start_contract,
+                                    end_num=end_contract,
+                                    report_month=report_month,
+                                    report_year=report_year)
+
+        return redirect(url_for("blueprint_report.view_report"))
+
+    return render_template("create_report.html", report_id=report_id, report_type=report_type)
 
 
-@blueprint_report.route('/view_report/<int:report_id>', methods=['GET', 'POST'])
+@blueprint_report.route('/view_report/<int:report_id>/<int:report_type>', methods=['GET'])
 @group_required
-def view_report(report_id):
-    if not group_validation(current_app.config['access_config'], 'blueprint_report.view_report'):
-        return render_template('exceptions/manager_only.html')
-    report_data = get_report_data(report_id)
-    return render_template("view_report.html", report_data=report_data, report_id=report_id)
+def view_report(report_id, report_type):
+    if report_type == 1:
+        reports = show_all_service_reports()
+    else:
+        reports = show_all_balance_reports()
+    print(reports)
+    return render_template("view_report.html", reports=reports, report_id=report_id, report_type=report_type)
+
+@blueprint_report.route('/view_report_details/<int:report_id>/<int:report_type>', methods=['GET'])
+@group_required
+def view_report_details(report_id, report_type):
+    if report_type == 1:
+        report_details = get_report_details_service(report_id)
+    else:
+        report_details = get_report_details_balance(report_id)
+    print(report_type)
+    return render_template("report_details.html", report_details=report_details, report_id=report_id, report_type=report_type)
 
 
 @blueprint_report.route('/exit')

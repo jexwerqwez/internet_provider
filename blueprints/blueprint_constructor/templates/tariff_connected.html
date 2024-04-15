@@ -1,0 +1,9 @@
+{% extends 'base_constructor.html' %}
+
+{% block title %} Тариф подключен {% endblock %}
+
+{% block body %}
+<h1>Тариф успешно подключен</h1>
+<p>Ваш тариф был успешно подключен. Спасибо за использование наших услуг!</p>
+<a href="{{ url_for('menu_choice') }}" class="btn btn-primary">На главную</a>
+{% endblock %}

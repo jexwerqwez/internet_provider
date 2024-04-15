@@ -1,0 +1,143 @@
+{% extends 'base_constructor.html' %}
+
+{% block title %}Услуги{% endblock %}
+
+{% block body %}
+<h1>Редактирование вашего тарифного плана</h1>
+<form method="POST" action="{{ url_for('blueprint_constructor.all_services') }}">
+    <div class="accordion" id="servicesAccordion">
+        {% for type, services in services_grouped_by_type.items() %}
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ type }}">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ type }}" aria-expanded="true" aria-controls="collapse{{ type }}">
+                    {{ type_names[type] }}
+                </button>
+            </h2>
+            <div id="collapse{{ type }}" class="accordion-collapse collapse show" aria-labelledby="heading{{ type }}" data-bs-parent="#servicesAccordion">
+                <div class="accordion-body">
+                    {% for service in services %}
+                    <div class="form-check">
+                    <input type="hidden" name="service_status[{{ service.all_services_id }}]" value="0" id="status{{ service.all_services_id }}">
+                    <button type="button" class="btn btn-sm {{ 'btn-warning' if service.all_services_id in activated_services else 'btn-success' }}" onclick="toggleService('{{ service.all_services_id }}', '{{ '1' if service.all_services_id in activated_services else '2' }}')">
+                        {{ 'Отключить' if service.all_services_id in activated_services else 'Подключить' }}
+                    </button>
+                    <label class="form-check-label" for="service{{ service.all_services_id }}" data-cost="{{ service.cost }}">
+                        <strong>{{ service.name }}</strong> - {{ service.cost }} Руб.<br>
+                        <small>{{ service.description }}</small>
+                    </label>
+
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Продолжить</button>
+</form>
+<button type="button" class="btn btn-secondary mt-3" onclick="clearCart()">Отключить все услуги</button>
+
+<div class="total-cost" id="total-cost">
+    <strong>Итоговая цена тарифного плана: {{ session.get('total_cost', 0) }} ₽</strong>
+</div>
+
+<script>
+function toggleService(serviceId, initialState) {
+    var statusField = document.getElementById('status' + serviceId);
+    var button = document.querySelector('button[onclick="toggleService(\'' + serviceId + '\', \'' + initialState + '\')"]');
+    var currentValue = statusField.value;
+
+    if (currentValue === '0') {
+        statusField.value = initialState === '1' ? '2' : '1';
+    } else {
+        statusField.value = '0';
+    }
+
+    if (statusField.value === '1') {
+        button.textContent = 'Отключить';
+        button.classList.remove('btn-success');
+        button.classList.add('btn-warning');
+    } else if (statusField.value === '2') {
+        button.textContent = 'Подключить';
+        button.classList.remove('btn-warning');
+        button.classList.add('btn-success');
+    } else {
+        button.textContent = initialState === '1' ? 'Отключить' : 'Подключить';
+        if (initialState === '1') {
+            button.classList.add('btn-warning');
+            button.classList.remove('btn-success');
+        } else {
+            button.classList.add('btn-success');
+            button.classList.remove('btn-warning');
+        }
+    }
+    updateTotalPrice();
+}
+
+
+function updateTotalPrice() {
+    var total = 0;
+
+    var serviceButtons = document.querySelectorAll('button.btn-warning');
+    serviceButtons.forEach(function(button) {
+        var serviceId = button.getAttribute('onclick').split(',')[0].replace("toggleService('", "").replace("'", "");
+        var statusField = document.getElementById('status' + serviceId);
+        if (statusField.value === '1' || statusField.value === '0') {
+            var price = parseFloat(button.nextElementSibling.getAttribute('data-cost'));
+            total += price;
+        }
+    });
+
+    document.getElementById('total-cost').innerHTML = '<strong>Итоговая цена: ' + total + ' ₽</strong>';
+}
+
+
+function resetButtons() {
+    var serviceButtons = document.querySelectorAll('.form-check button');
+    var serviceStatusFields = document.querySelectorAll('.form-check input[type=hidden]');
+
+    serviceButtons.forEach(function(button) {
+        var serviceId = button.getAttribute('onclick').split(',')[0].replace("toggleService('", "").replace("'", "");
+        var statusField = document.getElementById('status' + serviceId);
+
+        if (button.classList.contains('btn-warning')) {
+            statusField.value = '2';
+        } else {
+            statusField.value = '0';
+        }
+
+        button.textContent = 'Подключить';
+        button.classList.remove('btn-warning');
+        button.classList.add('btn-success');
+    });
+
+    updateTotalPrice();
+}
+
+function clearCart() {
+    fetch('{{ url_for('blueprint_constructor.clear_cart') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.text();
+        }
+        throw new Error('Something went wrong');
+    })
+    .then(html => {
+        document.open();
+        document.write(html);
+        document.close();
+        resetButtons();  // Сброс кнопок после очистки корзины
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    updateTotalPrice();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,1 @@
+CALL AddServiceOnOff(:service_id, :contract_id);

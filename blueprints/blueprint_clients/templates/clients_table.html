@@ -24,5 +24,9 @@
                     {% endfor %}
                 </tbody>
             </table>
+            <form action="{{ url_for('blueprint_clients.minus_cash') }}" method="post">
+                <input type="date" name="date_of_writeoff">
+                <button type="submit" class="btn btn-primary btn-sm">Списать деньги</button>
+            </form>
         </div>
     </div>

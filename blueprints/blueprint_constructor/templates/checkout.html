@@ -1,0 +1,41 @@
+{% extends 'base_services.html' %}
+
+{% block title %}
+Оформление заказа
+{% endblock %}
+
+{% block body %}
+<h1>Оформление заказа</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Цена</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for prod_id, product in basket.items() %}
+        <tr>
+            <td>{{ product.prod_name }}</td>
+            <td>{{ product.prod_price }}</td>
+            <td>{{ product.amount }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div style="display: flex; justify-content: space-around;">
+    {% if basket %}
+        <form action="{{ url_for('blueprint_constructor.confirm_order') }}" method="post">
+            <button type="submit" class="btn btn-success">Оформить заказ</button>
+        </form>
+    {% else %}
+        <button class="btn btn-success" disabled>Оформить заказ</button>
+    {% endif %}
+
+    <form action="{{ url_for('blueprint_constructor.clear_basket') }}" method="post">
+        <button type="submit" class="btn btn-warning">Очистить корзину</button>
+    </form>
+
+</div>
+{% endblock %}

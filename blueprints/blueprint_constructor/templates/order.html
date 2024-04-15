@@ -1,0 +1,43 @@
+{% extends 'base_constructor.html' %}
+
+{% block title %} Детали заказа {% endblock %}
+
+{% block body %}
+<h1>Детали вашего заказа</h1>
+
+{% if session.basket %}
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Название услуги</th>
+      <th scope="col">Цена</th>
+      <th scope="col">Стоимость</th>
+      <th scope="col">Действие</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for service_id, service in session.basket.items() %}
+    <tr>
+      <td>{{ service.name }}</td>
+      <td>{{ service.cost }} ₽</td>
+      <td>{{ service.cost * service.amount }} ₽</td>
+      <td>{{ service.action }}</td>
+    </tr>
+    {% endfor %}
+    <tr>
+      <td colspan="4" class="text-right"><strong>Итого:</strong></td>
+      <td><strong>{{ session.total_cost }} ₽</strong></td>
+    </tr>
+  </tbody>
+</table>
+<form action="{{ url_for('blueprint_constructor.connect_tariff') }}" method="post">
+  <button type="submit" class="btn btn-success">Подключить тариф</button>
+</form>
+{% else %}
+<p>Ваш тарифный план не изменился</p>
+{% endif %}
+
+<a href="{{ url_for('blueprint_constructor.all_services', clear_cart=True) }}" class="btn btn-primary">Вернуться к редактированию вашего тарифа</a>
+
+{% endblock %}
+

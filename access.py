@@ -32,9 +32,8 @@ def group_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         config = current_app.config['access_config']
-        if group_validation(config):
-            print("Group validation passed")
+        user_group = session.get('user_group', 'None')
+        if user_group in config and any(endpoint in request.endpoint for endpoint in config[user_group]):
             return f(*args, **kwargs)
-        print("Group validation failed")
         return render_template('exceptions/internal_only.html')
     return wrapper

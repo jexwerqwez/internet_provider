@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %} Услуги {% endblock %}
+
+{% block body %}
+<h1>Выберите услуги</h1>
+<form method="POST" action="{{ url_for('blueprint_constructor.add_to_cart') }}">
+  <div class="accordion" id="servicesAccordion">
+    {% for type, services in services_grouped_by_type.items() %}
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading{{ type }}">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ type }}" aria-expanded="true" aria-controls="collapse{{ type }}">
+          {{ type_names[type] }}
+        </button>
+      </h2>
+      <div id="collapse{{ type }}" class="accordion-collapse collapse show" aria-labelledby="heading{{ type }}" data-bs-parent="#servicesAccordion">
+        <div class="accordion-body">
+          {% for service in services %}
+          <div class="form-check">
+            <input class="form-check-input" type="{{ 'radio' if type == 'internet' else 'checkbox' }}"
+                   name="{{ 'internet_service' if type == 'internet' else 'other_services' }}"
+                   id="service{{ service.all_services_id }}"
+                   value="{{ service.all_services_id }}"
+                   data-cost="{{ service.cost }}"
+                   onchange="updateTotal()">
+            <label class="form-check-label" for="service{{ service.all_services_id }}">
+              <strong>{{ service.name }}</strong> - {{ service.cost }} Руб.<br>
+              <small>{{ service.description }}</small>
+            </label>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <button type="submit" class="btn btn-primary mt-3">Добавить в корзину</button>
+  <div class="total-cost">
+    <strong>Итоговая цена: {{ session.get('total_cost', 0) }} Руб.</strong>
+  </div>
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function updateTotal() {
+    var total = 0;
+    document.querySelectorAll('.form-check-input').forEach(function(service) {
+        if (service.checked) {
+            total += parseFloat(service.getAttribute('data-cost'));
+        }
+    });
+    document.querySelector('.total-cost strong').textContent = 'Итоговая цена: ' + total + ' Руб.';
+}
+</script>
+{% endblock %}

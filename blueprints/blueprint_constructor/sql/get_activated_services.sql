@@ -1,0 +1,2 @@
+SELECT all_services.all_services_id, all_services.name FROM service_on_off JOIN all_services ON all_services.all_services_id = service_on_off.all_services_id
+WHERE contract_number = :contract_number AND (off_date IS NULL OR off_date > CURRENT_DATE)

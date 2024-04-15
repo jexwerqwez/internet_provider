@@ -50,23 +50,30 @@ def add_service():
     name = request.form.get('name')
     cost = request.form.get('cost')
     description = request.form.get('description')
-    # Получите и обработайте другие данные из формы, если необходимо
+    type = request.form.get('type')
 
-    # SQL-запрос для добавления новой услуги
-    insert_query = text("INSERT INTO all_services (name, cost, description) VALUES (:name, :cost, :description)")
-    print("HERE")
+    insert_query = text("INSERT INTO all_services (name, cost, description, type) VALUES (:name, :cost, :description, :type)")
+
     try:
-        # Выполнение запроса
         with engine.connect() as connection:
-            result = connection.execute(insert_query, name=name, cost=cost, description=description)
-            print("HERE2")
-            print("RESULT:", result)
-            print("Добавлена услуга:", name, "с ценой:", cost)
-            flash('Услуга успешно добавлена', 'success')
+            # Начинаем транзакцию вручную
+            trans = connection.begin()
+            try:
+                connection.execute(insert_query, {'name': name, 'cost': cost, 'description': description, 'type': type})
+                trans.commit()
+                flash('Услуга успешно добавлена', 'success')
+            except Exception as e:
+                trans.rollback()
+                flash(f'Ошибка при добавлении услуги: {e}', 'error')
+                return render_template("error_message.html",
+                                       message="Произошла ошибка при выполнении транзакции. Пожалуйста, попробуйте позже.")
     except Exception as e:
-        flash(f'Ошибка при добавлении услуги: {e}', 'error')
+        flash(f'Ошибка при подключении к базе данных: {e}', 'error')
+        return render_template("error_message.html",
+                               message="Произошла ошибка при выполнении транзакции. Пожалуйста, попробуйте позже.")
 
     return redirect(url_for('blueprint_management.management'))
+
 
 
 @blueprint_management.route('/exit')

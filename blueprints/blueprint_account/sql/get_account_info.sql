@@ -1,3 +1,3 @@
 SELECT * FROM contract
-JOIN internal_user ON contract.contract_number = internal_user.contract_number
-WHERE internal_user.id = :user_id
+JOIN external_user ON contract.contract_number = external_user.contract_number
+WHERE external_user.id = :user_id

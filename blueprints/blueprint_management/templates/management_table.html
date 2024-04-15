@@ -6,6 +6,7 @@
                         <th scope="col">Услуга</th>
                         <th scope="col">Цена</th>
                         <th scope="col">Описание</th>
+                        <th scope="col">Тип</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -14,6 +15,7 @@
                         <td>{{ service.name }} </td>
                         <td>{{ service.cost }} ₽</td>
                         <td>{{ service.description }} </td>
+                        <td>{{ service.type }} </td>
                     </tr>
                     {% endfor %}
                 </tbody>

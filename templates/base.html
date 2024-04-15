@@ -23,17 +23,13 @@
         <li><a href="{{ url_for('menu_choice') }}" class="nav-link px-2 text-black">Вернуться на главную страницу</a></li>
         <li><a href="javascript:history.back()" class="nav-link px-2 text-secondary">Вернуться на страницу назад</a></li>
     </ul>
-
-<!--        <div class="text-end">-->
-<!--          <a href="{{ url_for('auth.start_auth') }}" class="btn btn-outline-dark me-2">Войти</a>-->
-<!--          <button type="button" class="btn btn-outline-dark">Зарегистрироваться</button>-->
-<!--        </div>-->
-      </div>
+</div>
     {% block body %}
     {% block internal_user %}{% endblock %}
     {% block external_user %}{% endblock %}
     {% endblock %}
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

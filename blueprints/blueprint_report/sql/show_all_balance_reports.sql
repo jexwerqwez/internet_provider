@@ -1,0 +1,1 @@
+select * from report_client_spending

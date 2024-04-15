@@ -8,6 +8,8 @@ from blueprints.blueprint_report.route import blueprint_report
 from blueprints.blueprint_account.route import blueprint_account
 from blueprints.blueprint_clients.route import blueprint_clients
 from blueprints.blueprint_management.route import blueprint_management
+from blueprints.blueprint_constructor.route import blueprint_constructor
+
 from access import login_required, group_required
 
 app = Flask(__name__)
@@ -20,6 +22,7 @@ app.register_blueprint(blueprint_services, url_prefix='/services')
 app.register_blueprint(blueprint_report, url_prefix='/report')
 app.register_blueprint(blueprint_clients, url_prefix='/clients')
 app.register_blueprint(blueprint_management, url_prefix='/management')
+app.register_blueprint(blueprint_constructor, url_prefix='/constructor')
 app.register_blueprint(auth, url_prefix='/auth')
 
 app.config['access_config'] = json.load(open('data_files/access.json'))

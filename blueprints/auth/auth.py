@@ -16,18 +16,18 @@ def execute_query_from_file(filename, **params):
         columns = result.keys()
         return [dict(zip(columns, row)) for row in result.fetchall()]
 
+
 def define_user(login, password):
     external_user = execute_query_from_file('external_user.sql', login=login, password=password)
     internal_user = execute_query_from_file('internal_user.sql', login=login, password=password)
+
     if external_user:
-        print(external_user[0])
-        return external_user[0]
+        return {**external_user[0], 'user_group': 'external'}
     elif internal_user:
-        print(internal_user[0])
-        return internal_user[0]
+        return {**internal_user[0], 'user_group': internal_user[0].get('user_group', 'None')}
     else:
-        print("User not found")
-        return None
+        return {'user_group': 'None'}
+
 
 @auth.route('/', methods=['GET', 'POST'])
 def start_auth():
@@ -38,11 +38,13 @@ def start_auth():
         password = request.form.get('password')
         if login and password:
             user_info = define_user(login, password)
-            if user_info:
+            if user_info and user_info.get('user_group') != 'None':
                 session['user_id'] = user_info['id']
-                session['user_group'] = user_info.get('user_group')
+                session['user_group'] = user_info['user_group']
                 session.permanent = True
+                print(f"User {login} logged in with group: {user_info['user_group']}")
                 return redirect(url_for('menu_choice'))
             else:
-                return render_template('login.html', message='Пользователь не найден')
-    return render_template('login.html', message='Повторите ввод')
+                return render_template('login.html', message='Ошибка аутентификации: Пользователь не найден или доступ запрещен')
+        else:
+            return render_template('login.html', message='Повторите ввод')

@@ -10,10 +10,19 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 def execute_query_from_file(filename, **params):
     with open(os.path.join(current_dir, 'sql', filename), 'r') as file:
         query = file.read().strip()
+
     with engine.connect() as connection:
-        result = connection.execute(text(query).bindparams(**params))
-        columns = result.keys()
-        return [dict(zip(columns, row)) for row in result.fetchall()]
+        try:
+            result = connection.execute(text(query).bindparams(**params))
+            connection.commit()
+            if result.returns_rows:
+                columns = result.keys()
+                return [dict(zip(columns, row)) for row in result.fetchall()]
+            else:
+                return None
+        except Exception as e:
+            connection.rollback()
+            return render_template("error_message.html", message="Произошла ошибка при выполнении транзакции. Пожалуйста, попробуйте позже.")
 
 
 def count_services():
@@ -53,12 +62,18 @@ def all_clients():
     return render_template("all_clients.html", clients=clients, current_page=page, total_pages=total_pages)
 
 
-# @blueprint_services.route('/menu')
-# @group_required
-# def menu_detail():
-#     categories = ge()
-#     return render_template("menu.html", categories=categories)
+
+@blueprint_clients.route('/minus_cash', methods=['GET', 'POST'])
+@group_required
+def minus_cash():
+    if request.method == 'POST':
+        date = request.form.get('date_of_writeoff')
+        execute_query_from_file('call_transaction.sql', date=date)
+        return redirect(url_for('blueprint_clients.all_clients'))
+    return render_template("some_template.html")  # Замените на имя вашего шаблона
+
 
 @blueprint_clients.route('/exit')
 def exit_app():
+    execute_query_from_file('call_procedure_service_report.sql')
     return render_template("main-menu.html")

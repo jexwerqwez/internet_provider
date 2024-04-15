@@ -1,33 +1,33 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Просмотр отчёта
+Просмотр отчётов
 {% endblock %}
+
 {% block body %}
 <body>
     <div class="container">
-        <h2 class="my-4">Просмотр отчета</h2>
+        <h2 class="my-4">Список отчетов</h2>
         <table class="table">
             <thead>
                 <tr>
-                    <th>№</th>
-                    <th>От</th>
-                    <th>До</th>
-                    <th>Данные отчёта</th>
+                    <th>ID</th>
+                    <th>Месяц</th>
+                    <th>Год</th>
+                    <th>Детали</th>
                 </tr>
             </thead>
             <tbody>
-                {% for row in report_data %}
+                {% for report in reports %}
                 <tr>
-                    <td>{{ row['row_id'] }}</td>
-                    <td>{{ row['date_from'] }}</td>
-                    <td>{{ row['date_to'] }}</td>
-                    <td>{{ row['report_data'] }}</td>
+                    <td>{{ report['r_id'] }}</td>
+                    <td>{{ report['rep_month'] }}</td>
+                    <td>{{ report['rep_year'] }}</td>
+                    <td><a href="{{ url_for('blueprint_report.view_report_details', report_id=report['r_id'], report_type=report_type) }}">Подробнее</a></td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </body>
-</html>
 {% endblock %}

@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, session
 from sqlalchemy import text
 from database.connect import engine
 from access import group_required
@@ -39,6 +39,13 @@ def get_all_from_db(page, per_page=10):
     return execute_query_from_file('get_all_services.sql', limit=per_page, offset=offset)
 
 
+def get_service_by_id(all_services_id):
+    result = execute_query_from_file('get_service_by_id.sql', all_services_id=all_services_id)
+    if result:
+        return result[0]  # Возвращаем первый элемент списка
+    return None
+
+
 @blueprint_services.route('/', methods=['GET', 'POST'])
 @group_required
 def all_services():
@@ -52,13 +59,6 @@ def all_services():
     services = get_all_from_db(page)
     print(services)
     return render_template("all_services.html", services=services, current_page=page, total_pages=total_pages)
-
-
-# @blueprint_services.route('/menu')
-# @group_required
-# def menu_detail():
-#     categories = ge()
-#     return render_template("menu.html", categories=categories)
 
 @blueprint_services.route('/exit')
 def exit_app():

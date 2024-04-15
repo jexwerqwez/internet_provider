@@ -1,0 +1,33 @@
+<div class="bd-example-snippet bd-code-snippet">
+    <div class="bd-example m-0 border-0">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Услуга</th>
+                    <th scope="col">Цена</th>
+                    <th scope="col">Действие</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for service in services %}
+                <tr>
+                    <td>{{ service.name }} </td>
+                    <td>{{ service.cost }} ₽</td>
+                    <td>
+                        {% if service.all_services_id|string in session.basket %}
+                            <form action="{{ url_for('blueprint_constructor.update_cart', all_services_id=service.all_services_id) }}" method="post">
+                                <button type="submit" name="change" value="decrease" class="btn btn-danger">Отключить</button>
+                            </form>
+                        {% else %}
+                            <form method="post" action="{{ url_for('blueprint_constructor.add_to_cart') }}" onsubmit="return confirm('Подтвердите подключение услуги');">
+                                <input type="hidden" name="all_services_id" value="{{ service.all_services_id }}">
+                                <a href="{{ url_for('blueprint_constructor.all_services') }}" class="btn btn-primary">Вернуться к выбору услуг</a>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
